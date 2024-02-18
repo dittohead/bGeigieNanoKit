@@ -5,22 +5,20 @@
 // bGeigie Nano definitions
 //
 
-#define NANO_DEVICE_ID        2410
-#define NANO_VERSION       "1.4.5"
+#define NANO_DEVICE_ID        2007
+#define NANO_VERSION       "1.4.3"
 #define NANO_HEADER        "BNRDD"
 #define NANO_CPM_FACTOR        334
 #define NANO_BQM2_FACTOR        37
 
-//  
+//
 // Enable or Disable features
 //
 
 #define ENABLE_DEBUG             0
 #define ENABLE_DIAGNOSTIC        0
-#define ENABLE_SLEEPMODE         0
 #define ENABLE_SSD1306           1
 #define ENABLE_SOFTGPS           1
-#define ENABLE_STATIC_GPS        0
 #define ENABLE_HARDWARE_COUNTER  0
 #define ENABLE_OPENLOG           1
 #define ENABLE_WAIT_GPS_FOR_LOG  1
@@ -105,7 +103,7 @@
 #define INTERRUPT_COUNTER_PIN 0
 
 // bGeigie <-> xGeigie switch pin
-#define GEIGIE_TYPE_PIN A5
+#define GEIGIE_TYPE_PIN A7
 #define GEIGIE_TYPE_THRESHOLD 500
 
 // Voltage divider
