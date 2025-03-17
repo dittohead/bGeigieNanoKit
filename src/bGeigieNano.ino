@@ -42,7 +42,7 @@
 #include <avr/wdt.h>
 #include <EEPROM.h>
 #include "TinyGPS.h"
-#include <SoftwareSerial.h>
+#include "libs/SoftwareSerial.h"
 
 #include "NanoSetup.h"
 #include "NanoConfig.h"
@@ -52,8 +52,8 @@
 // OLED settings --------------------------------------------------------------
 #if ENABLE_SSD1306
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "Adafruit_GFX.h"
+#include "Adafruit_SSD1306.h"
 
 #ifdef OLED_SPI_MODE
 Adafruit_SSD1306 display(OLED_DATA, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
@@ -281,6 +281,30 @@ static DoseType dose;
 NanoSetup nanoSetup(OpenLog, config, dose, line, LINE_SZ);
 #endif
 
+bool display_enabled = true;
+unsigned long interrupt_time = millis();
+  static unsigned long last_interrupt_time = 0;
+  unsigned long debounceDelay = 300;
+
+void toggle_display(){
+  int reading = digitalRead(CUSTOM_FN_PIN);
+
+  if (interrupt_time - last_interrupt_time > debounceDelay) {
+    if (display_enabled){
+       display.ssd1306_command(SSD1306_DISPLAYOFF);
+       display_enabled = false;
+    } else if(!display_enabled){
+       display.ssd1306_command(SSD1306_DISPLAYON);
+       display.clearDisplay();
+       display_enabled = true;
+    };
+
+    last_interrupt_time = interrupt_time;
+  }
+
+  };
+
+
 // ****************************************************************************
 // Setup
 // ****************************************************************************
@@ -289,6 +313,7 @@ void setup()
 
 #ifdef ENABLE_CUSTOM_FN
   pinMode(CUSTOM_FN_PIN, INPUT_PULLUP);
+  attachInterrupt(1, toggle_display, HIGH) ;
 #endif
 
 #ifdef GPS_LED_PIN
@@ -422,7 +447,7 @@ void setup()
 void loop()
 {
   bool gpsReady = false;
-
+  
 #if ENABLE_GEIGIE_SWITCH
   // Check geigie mode switch
   if (analogRead(GEIGIE_TYPE_PIN) > GEIGIE_TYPE_THRESHOLD) {
